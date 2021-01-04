@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="84c6f998-d030-4ecd-b4e1-631154ae2c94" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="ca4090d7-dc3e-45a1-8eb9-8c365750ea9c" file="sam_pro.properties" />
+	<flow name="sample_property_place_holderFlow" doc:id="381166bb-4162-4316-b23f-7fdf16b494f2" >
+		<http:listener doc:name="Listener" doc:id="1929f1cd-0fd7-46d5-bbeb-f3866374d205" config-ref="HTTP_Listener_config" path="/qaz"/>
+		<set-variable value="${policies.type}" doc:name="Set Variable" doc:id="750e4601-c55e-42bc-ad2a-fc84035b44d3" variableName="v12"/>
+		<ee:transform doc:name="Transform Message" doc:id="b26c610d-621c-4d4b-8bff-71aa27d6423b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{ 
+	id1: "${policies.type}",
+	id2: "${policies.code}",
+	id3: "${name}",
+	id4: p('policies.type'),
+	id5: p('name')
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="52717e26-5761-4064-9081-44fb56859255" message="#[vars.v12]"/>
+	</flow>
+</mule>
